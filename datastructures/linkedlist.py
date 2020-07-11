@@ -1,23 +1,7 @@
-import time
+from node import Node
 
-class Node:
 
-    """A node that serves as a foundation for other ADTs."""
-
-    def __init__(self, data=None, next=None):
-        self.data = data 
-        self.next = next
-
-    def get_data(self):
-        return self.data
-
-    def get_next(self):
-        return self.next
-
-    def set_next(self, new_next=None):
-        Self.next = new_next
-
-class LinkedList:
+class LinkedList(object):
 
     """ A singly-linked list that relies on nodes. """
 
@@ -237,17 +221,43 @@ class LinkedList:
         
         return sorted_merge(left, right)
 
-    def merge_sort_bottom_up(self):
-        return
-
 
 
     """
     Mergesort but exploits naturally sorted inputs, merges them, and makes one single pass through the input list.
-    Time complexity is O(n lg n) but space complexity is O(n).
+    Time complexity is O(n lg n) but space complexity is O(1).
     Not a stable sort, as it wont preserve equal value comparisons or orderings. 
     """    
     def natural_merge_sort(self):
+        if self.n <= 1: return
+
+        offset = 0
+        while True:
+            stop1 = self.find_next_stop(offset)
+            offset = stop1
+            stop2 = self.find_next_stop(stop1)
+            self.merge_from_k(stop1, stop2)
+            # Find sorted stop1
+            # Find sorted stop2
+            # merge two sorted 
+        return
+
+    def find_next_stop(self):
+        if self.n <= 1: return
+        current = self.head
+        position, result = 0, None
+        while current:
+            next = current.next
+            if next:
+                if next.data > current.data:
+                    result = position
+                    break
+            position += 1
+            current = next
+        return result
+   
+
+    def merge_from_k(self, stop1, stop2):
         return
 
 
@@ -341,25 +351,29 @@ class LinkedList:
 
 
 """
-General utility functions.
-"""
+#######################################################################
+##############      General utility functions. ########################
+######################################################################
+
 
 """
-Sorts the list using recursive mergesor.
-This is clean, but uses stack space proportional to the input size and can introduce a stack overflow.
 
-Time complexity O(n lg n), space is O(n)
-"""
-def merge_sort(links : LinkedList):
+
+
+def merge_sort_recursive(links : LinkedList):
+    """
+    Sorts the list using recursive mergesort.
+    This is clean, but uses stack space proportional to the input size and can introduce a stack overflow.
+
+    Time complexity O(n lg n), space is O(n)
+    """
     if links.head is None or links.n == 1: 
-        print("one item in LL, length: ", links.n)
-        print("item is :", links.head.data)
         return links # list of len 1 is sorted.
-    
+
     left, right = links.split_front_back()
     
-    left = merge_sort(LinkedList(left))
-    right = merge_sort(LinkedList(right))
+    left = merge_sort_recursive(LinkedList(left))
+    right = merge_sort_recursive(LinkedList(right))
     
     return merge(left.head, right.head)
 
@@ -376,11 +390,9 @@ def merge(headA: Node, headB: Node):
 
     while not (headA is None or headB is None):
         if headA.data < headB.data:
-            print(headA.data, "< ", headB.data)
             current = headA
             headA = headA.next
         else:
-            print(headA.data, ">= ", headB.data)
             current = headB
             headB = headB.next
 
@@ -393,12 +405,12 @@ def merge(headA: Node, headB: Node):
 
 
 def build_example(*args):
-    """ Builds a linked list arg1->arg2->arg3"""
-    LL = LinkedList()
+    """ Builds a linked list arg1->arg2->arg3..->argn in [arg1.... argN)"""
+    result = LinkedList()
     for arg in args:
-        LL.push(arg)
-    LL.set_size()
-    return LL
+        result.push(arg)
+    result.set_size()
+    return result
 
 def move_node(dest: Node, source: Node):
     """
@@ -436,9 +448,10 @@ if __name__ == '__main__':
     
 
     b = build_example(-2, -3, -4, 0, -1, -1239, 12, 19, -12, 93)
-
+    c = merge_sort_recursive(b)
+    c.print_nodes()
     #c = merge_sort(b)
     #c.print_nodes()
-    b.merge_sort_top_down()
+    #b.merge_sort_top_down()
     
     
