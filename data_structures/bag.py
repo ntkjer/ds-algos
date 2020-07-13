@@ -1,5 +1,9 @@
 from node import Node 
 
+
+__author__ = "Niels Kjer @ntkjer"
+
+
 class Bag(object):
     """
     A list-based bag ADT.
@@ -20,6 +24,9 @@ class Bag(object):
 
     def add(self, data):
         self.items.append(data) 
+
+    def size(self):
+        return self.__len__()
 
     def remove(self, item):
         assert item in self.items, "item must be in bag."
