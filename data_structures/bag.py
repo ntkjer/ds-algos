@@ -1,5 +1,5 @@
 from node import Node 
-
+import random
 
 __author__ = "Niels Kjer @ntkjer"
 
@@ -34,6 +34,17 @@ class Bag(object):
         return self.items.pop(result)
 
 
+    def shuffle(self):
+        """
+        Performs a Fisher-Yates shuffle of the elements in the Bag.
+        Creates unbiased permutations of the bag in O(n) time.
+
+        """
+        for i in range self.size():
+            j = random.randrange(0, i)
+            self.items[j], self.items[i] = self.items[i], self.items[j]
+
+    
 class _BagIterator(object):
     """
     Iterator for the Bag ADT above, which uses a list.
