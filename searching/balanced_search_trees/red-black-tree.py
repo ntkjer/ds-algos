@@ -1,10 +1,14 @@
 
-class REDBLACKTree(object):
+class RedBlackTree(object):
     """
     A balanced search tree that maintains near perfect balance and 1:1 correspondence between 2-3 trees.
     
     The node representations for all linked items in the tree utilize the internal class _Node. 
     The _Node internal class maintains two links, each to a left or right child, and one k:v mapped internally.
+
+    The max tree height f(n)= c*lg n, where c is between 1.0 and 2.0 on average, with 2 being the worst case.
+
+    This property will gurantee efficient put, get, and delete in our symbol table.
 
     Colored links: 
     Blank links define a normal parent child relationship (2 node), while red links represent a 3 node structure.
@@ -16,6 +20,18 @@ class REDBLACKTree(object):
     Maintaining balance:
     There are three local transformations that maintain the balanced tree:
     rotate_left, rotate_right, and flip_colors.
+    
+    Invariants:
+
+    Each red parent will have two black linked children. 
+    All black links are balanced.
+    Two consecutive red links are impossible.
+    
+    @doctest
+    >>> tree = RedBlackTree()
+    >>> tree.root
+    None
+    >>> tree.insert(2,3)
 
     """
     class _Node(object):
