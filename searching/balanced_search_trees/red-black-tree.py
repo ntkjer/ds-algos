@@ -21,18 +21,22 @@ class RedBlackTree(object):
     There are three local transformations that maintain the balanced tree:
     rotate_left, rotate_right, and flip_colors.
     
-    Invariants:
+    Invariants of the red-black tree, per CLRS:
+    1. Every node is either red or black.
+    2. The root is black.
+    3. Every leaf (None) is black.
+    4. If a node is red, both of its children are black.
+    5. For each node, all simple paths from the node to descendant leaves contains the same number of black nodes.
 
-    Each red parent will have two black linked children. 
-    All black links are balanced.
-    Two consecutive red links are impossible.
+    Satisfying these properties ensures that our tree's worst-case height is at most 2 lg(n + 1). 
     
     @doctest
     >>> tree = RedBlackTree()
     >>> tree.root
     None
-    >>> tree.insert(2,3)
-
+    >>> tree.insert(0, "apple")
+    >>> tree.insert(3, "banana")
+    >>> tree.insert(-2, "orange")
     """
     class _Node(object):
 
