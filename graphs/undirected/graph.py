@@ -1,4 +1,4 @@
-import doctest
+import doctest, sys, copy
 
 from collections import defaultdict, deque
 
@@ -7,14 +7,41 @@ class Graph(object):
     A graph class that support DFS And BFS
     """
     def __init__(self, input_file=None, graph=None):
+        assert(not (input_file and graph)), "Can't create G from file AND another graph."
         self._edges_size = 0
         self._vertices_size = 0
         self._adj = defaultdict(list)
-        # Handle file input graph construction
-        if input_file is not None: return
+        if input_file:
+            g = self._create_graph_from_file(input_file)
+            self._adj = copy.deepcopy(g._adj)
+            self._edges_size = g.edges_size()
         if graph:
             self._adj = copy.deepcopy(graph._adj)
             self._edges_size = graph.edges_size()
+
+    def _create_graph_from_file(self, input_file=None):
+        """
+        Creates a graph from file input by reading each line. 
+        Expects the header of the file to be the number of V and E in a graph, separated by \n.
+        E.g $ cat foo.txt
+        1
+        1
+        0 3
+        \t 
+        TODO: read sys.stdin as dummy f so we can pipe like cat foo.txt | python graph.py
+        """
+        if input_file is None: return
+        with open(input_file) as f:
+            v_size = int(f.readline())
+            e_size = int(f.readline())
+            g = Graph()
+            g._vertices_size = v_size
+            for line in f:
+                l = line.split(' ')
+                v, w = int(l[0]), int(l[1])
+                g.add_edge(v, w)
+        return g
+
     
     def __iter__(self):
         """ for x in self.Graph(v) -> [w0, w1, ..., wn]"""
@@ -28,7 +55,6 @@ class Graph(object):
         self._adj[v].append(w)
         self._adj[w].append(v)
         self._edges_size += 1
-
 
     def edges_size(self):
         return self._edges_size
@@ -129,6 +155,39 @@ class BreadthFirstPaths(object):
             print(paths.pop())
              
 
+class ConnectedComponents(object):
+    """ 
+    An application of depth first search for the union find problem.
+
+    """
+    def __init__(self, g : Graph):
+        self._marked = defaultdict(bool)
+        self._id = {}
+        self._count = 0
+        s = 0
+        while s < g.vertices_size():
+            if not self._marked[s]:
+                self.dfs(g, s)
+                self._count += 1
+            s += 1
+    
+    def dfs(self, graph : Graph, v):
+        self._marked[v] = True
+        self._id[v] = self.count()
+        for w in g.adj(v):
+            if not self._marked[w]: 
+                self.dfs(g, w)
+
+    def connected(self, v, w):
+        return self.id(v) == self.id(w)
+
+    def id(self, v):
+        return self._id[v]
+
+    def count(self):
+        return self._count
+
+
 if __name__ == '__main__':
     g = Graph()
     g.add_edge(1, 2)
@@ -140,3 +199,8 @@ if __name__ == '__main__':
 
     bfp = BreadthFirstPaths(g, 4)
     bfp.print_path_to(8)
+    print("creating from file") 
+    g = Graph("../sample_data/tinyg.txt")
+    print(g.vertices_size(), g.edges_size())
+    
+
