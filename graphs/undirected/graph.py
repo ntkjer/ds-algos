@@ -187,6 +187,57 @@ class ConnectedComponents(object):
     def count(self):
         return self._count
 
+class Cycle(object):
+
+    HAS_CYCLE = True
+
+    def __init__(self, g : Graph):
+        self._marked = defaultdict(bool)
+        self.HAS_CYCLE = not self.HAS_CYCLE
+        s = 0
+        while s < g.vertices_size():
+            if not self._marked[s]:
+                self.dfs(g, -1, s)
+            s += 1
+    
+    def dfs(self, g: Graph, u, v):
+        self._marked[v] = True
+        for w in g.adj(v):
+            if not self._marked[w]:
+                self.dfs(g, v, w)
+            else if w != u:
+                self.HAS_CYCLE = True
+
+    def has_cycle(self):
+        return self.HAS_CYCLE
+
+class Bipartite(object):
+    
+    IS_BIPARTITE = True
+
+    def __init__(self, g : Graph):
+        self._marked = defaultdict(bool)
+        self._color = defaultdict(bool)
+        self.IS_BIPARTITE = not self.IS_BIPARTITE
+        s = 0
+        while s < g.vertices_size():
+            if not self._marked[s]:
+                self.dfs(g, s)
+            s += 1
+
+    def dfs(self, g : Graph, v):
+        self._marked[v] = True
+        for w in g.adj(v):
+            if not self._marked[w]:
+                self._color[w] = not self._color[v]
+                self.dfs(g, w)
+            else if self._color[w] == self._color[v]:
+                self.IS_BIPARTITE = False
+
+    def is_bipartite(self):
+        return self.IS_BIPARTITE 
+
+
 
 if __name__ == '__main__':
     g = Graph()
